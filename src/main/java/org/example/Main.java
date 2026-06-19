@@ -86,7 +86,7 @@ public class Main {
 
         println(String.format("Found %d photos", photoPaths.size()));
 
-        var photos = photoPaths.stream()
+        var photos = photoPaths.parallelStream()
                 .map(path -> createImage(path.toString(), thumbWidth, thumbHeight))
                 .toList();
 
@@ -116,7 +116,7 @@ public class Main {
         var fileDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        ImageIO.write(sheet, "jpg", new File(String.format("%s_%s_sheet.jpg", fileDate, roll)));
+        ImageIO.write(sheet, "jpg", new File(String.format("%s-%s-sheet.jpg", fileDate, roll)));
 
         println("Done");
     }
