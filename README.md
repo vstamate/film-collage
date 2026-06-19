@@ -14,8 +14,9 @@ To this:
 * place the jar in the root folder where your images are located
 * create a `data.txt` file
 * run `java -jar film-collage.jar`. This will create your collage.
-* in case you have multiple folders where you want to create collages, copy `run.sh` into a parent folder and run it.
+* in case you have multiple folders where you want to create collages, copy `generate.sh` into a parent folder and run it.
 This will search recursively for the .jar files and each one will be executed.
+* to extract all collages, run `extract.sh`
 
 data.txt
 ```text
