@@ -38,8 +38,16 @@ public class Main {
         }
     }
 
-    private static void run() throws IOException {
+    private static void run() throws Exception {
 
+        var rootPathString = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                .getParentFile()
+                .getAbsolutePath();
+        // to test it replace it with
+        // var root = Path.of(System.getProperty("user.dir"));
+        var root = Path.of(rootPathString);
+
+        println(root);
         println("Reading data");
 
         var film = "";
@@ -48,14 +56,18 @@ public class Main {
         var ratio = 0d;
         var date = "";
         var roll = "";
+        var extras = "";
 
-        try (Scanner scanner = new Scanner(Paths.get("data.txt"))) {
+        try (Scanner scanner = new Scanner(Paths.get(root + "/" + "data.txt"))) {
             film = scanner.nextLine();
             filmType = scanner.nextLine();
             ratioString = scanner.nextLine();
             ratio = parseRatio(ratioString); // 3:2 -> 3 / 2
             date = scanner.nextLine();
             roll =  scanner.nextLine();
+            if (scanner.hasNextLine()) {
+                extras = scanner.nextLine();
+            }
         } catch (Exception e) {
             println("Exception while reading data: " + e.getMessage());
             return;
@@ -76,7 +88,6 @@ public class Main {
         int thumbFullWidth = thumbWidth + GAP;
         int thumbFullHeight = thumbHeight + GAP;
 
-        var root = Path.of(System.getProperty("user.dir"));
         var photoPaths = Files.list(root)
                 .filter(p -> !p.toString().contains("sheet"))
                 .filter(p -> p.toString().matches("(?i).*\\.(jpg|jpeg|png|tiff)$"))
@@ -106,17 +117,21 @@ public class Main {
             g.drawImage(photos.get(i), x, y, thumbWidth, thumbHeight, null);
         }
 
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(20, 20, 20));
         g.setFont(new Font("Monospaced", Font.BOLD, FONT_SIZE));
         var textX = MARGIN + (int) (1d * GAP / 2d);
         g.drawString(String.format("Film: %s %s", film, filmType), textX, TEXT_HEADER);
         g.drawString(String.format("Date: %s", date), textX, TEXT_HEADER + FONT_SIZE);
         g.drawString(String.format("Roll: %s", roll), textX, TEXT_HEADER + FONT_SIZE * 2);
 
+        if (!extras.isBlank()) {
+            g.drawString(String.format("Extras: %s", extras), textX, TEXT_HEADER + FONT_SIZE * 3);
+        }
+
         var fileDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        ImageIO.write(sheet, "jpg", new File(String.format("%s-%s-sheet.jpg", fileDate, roll)));
+        ImageIO.write(sheet, "jpg", new File(String.format("%s/%s-%s-sheet.jpg", root, fileDate, roll)));
 
         println("Done");
     }
