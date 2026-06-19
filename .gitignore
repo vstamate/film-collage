@@ -46,5 +46,7 @@ bin/
 .DS_Store
 
 *.jpg
-*.JPG
+*.png
+!collage.jpg
+!photos.png
 data.txt

@@ -74,13 +74,6 @@ public class Main {
         }
 
         var cols = filmType.equals("35mm") ? 5 : 3;
-        var headerHeight = switch (ratioString) {
-            case "3:2" -> 375 * SCALE_FACTOR;
-            case "6:6" -> 250 * SCALE_FACTOR;
-            case "6:4.5" -> 375 * SCALE_FACTOR;
-            case "7:6" -> 375 * SCALE_FACTOR;
-            default -> 375 * SCALE_FACTOR;
-        };
 
         int thumbWidth = (TOTAL_WIDTH - 2 * MARGIN) / cols - GAP;
         int thumbHeight = (int) (1.0 * thumbWidth * (1 / ratio));
@@ -89,11 +82,19 @@ public class Main {
         int thumbFullHeight = thumbHeight + GAP;
 
         var photoPaths = Files.list(root)
-                .filter(p -> !p.toString().contains("sheet"))
+                .filter(p -> !p.toString().contains("-collage."))
                 .filter(p -> p.toString().matches("(?i).*\\.(jpg|jpeg|png|tiff)$"))
                 .sorted()
                 .map(Path::toFile)
                 .toList();
+
+        var headerHeight = switch (ratioString) {
+            case "3:2" -> 350;
+            case "6:6" -> 250;
+            case "6:4.5" -> 325;
+            case "7:6" -> 325;
+            default -> 325;
+        } * SCALE_FACTOR;
 
         println(String.format("Found %d photos", photoPaths.size()));
 
@@ -131,7 +132,7 @@ public class Main {
         var fileDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        ImageIO.write(sheet, "jpg", new File(String.format("%s/%s-%s-sheet.jpg", root, fileDate, roll)));
+        ImageIO.write(sheet, "jpg", new File(String.format("%s/%s-%s-collage.jpg", root, fileDate, roll)));
 
         println("Done");
     }
